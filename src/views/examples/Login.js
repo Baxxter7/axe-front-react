@@ -32,7 +32,44 @@ import {
   Col
 } from "reactstrap";
 
+import axios from "axios";
+import { useHistory } from 'react-router-dom'
+
+//http://127.0.0.1:8000/AXE/Login
+const url="http://localhost:8000/AXE/Login";
+
 const Login = () => {
+
+  var state={
+    data:[],
+    form:{
+      username: '',
+      password: ''
+    }
+  }
+
+  const history = useHistory();
+
+  const handleRedirect = () => {
+    console.log('Me estoy ejecutando')
+    history.push('/admin/index');
+  };
+
+
+  var peticionPost = ()=>{
+
+
+  axios.post(url, state.form).
+    then((response)=>{
+      console.log(response)
+      
+      localStorage.setItem('token', response.data.token);
+      handleRedirect();
+
+    }).catch(error=>{
+      console.log(error.response.data);
+    })
+}
   return (
     <>
       <Col lg="5" md="7">
@@ -94,6 +131,9 @@ const Login = () => {
                     placeholder="Email"
                     type="email"
                     autoComplete="new-email"
+                    onChange={(e)=> {
+                      state.form.username = e.target.value
+                    }}
                   />
                 </InputGroup>
               </FormGroup>
@@ -108,6 +148,10 @@ const Login = () => {
                     placeholder="Password"
                     type="password"
                     autoComplete="new-password"
+                    onChange={(e)=> {
+
+                      state.form.password = e.target.value
+                    }}
                   />
                 </InputGroup>
               </FormGroup>
@@ -125,9 +169,10 @@ const Login = () => {
                 </label>
               </div>
               <div className="text-center">
-                <Button className="my-4" color="primary" type="button">
-                  Sign in
+                <Button className="my-4" color="primary" type="button"  onClick={()=>peticionPost()}>
+                  Sign in HERE
                 </Button>
+                
               </div>
             </Form>
           </CardBody>
